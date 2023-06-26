@@ -1,0 +1,4 @@
+﻿  NoBombs.cpp
+D:\Facundo Piputto\Proyecto\NoBombs\NoBombs\NoBombs.cpp(73,40): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+D:\Facundo Piputto\Proyecto\NoBombs\NoBombs\NoBombs.cpp(73,33): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+  NoBombs.vcxproj -> D:\Facundo Piputto\Proyecto\NoBombs\x64\Debug\NoBombs.exe
