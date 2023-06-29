@@ -1,4 +1,5 @@
 ﻿  NoBombs.cpp
-D:\Facundo Piputto\Proyecto\NoBombs\NoBombs\NoBombs.cpp(73,40): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
-D:\Facundo Piputto\Proyecto\NoBombs\NoBombs\NoBombs.cpp(73,33): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
-  NoBombs.vcxproj -> D:\Facundo Piputto\Proyecto\NoBombs\x64\Debug\NoBombs.exe
+E:\Facu\5to\Juego\No-Bombs\NoBombs\NoBombs.cpp(13,15): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+E:\Facu\5to\Juego\No-Bombs\NoBombs\NoBombs.cpp(153,44): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+E:\Facu\5to\Juego\No-Bombs\NoBombs\NoBombs.cpp(153,33): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+  NoBombs.vcxproj -> E:\Facu\5to\Juego\No-Bombs\x64\Debug\NoBombs.exe

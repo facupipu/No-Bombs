@@ -1,37 +1,80 @@
+//includes necesarios para el funcionamiento del programa
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include<time.h>
 
+//no se que hace pero aparentemente es importante para no tener que escribir sf :: en algunas funciones
 using namespace sf;
 
-void check(int m1[11][11], int m2[11][11]) {
-    
-};
-
 int main()
-    {
-    int grid[11][11];
-    int sgrid[11][11];
+{   
+    //se declara la seed de los random y las variables principales del programa
+    srand(time(NULL));
+    const int size = 12;
+    int bomb_count;
+    int unreveled = ((size - 2) * (size - 2));
+    int grid[size][size];
+    int sgrid[size][size];
     int w = 32;
-    RenderWindow window(VideoMode(400, 400), "NoBOMBS!");
-
+    int x = 0;
+    int y = 0;
+    bool finish = false;
+    //se elige la cantidad de minas
+    printf("Elegi la cantidad de bombas:");
+    scanf_s("%d", &bomb_count);
+    fflush(stdin);
+    printf("\n");
+    //chequea que el valor ingresado sea correcto, si no es correcto entra en un loop
+    while (bomb_count < 1 || bomb_count >= unreveled) {
+        //se sale del loop cuando se ingresa un dato correcto
+        printf("LA CANTIDAD DE MINAS ES INVALIDAD\n");
+        printf("Elegi la cantidad de bombas:");
+        scanf_s("%d", &bomb_count);
+        fflush(stdin);
+        printf("\n");
+    }
+    system("cls");
+    //se declara la ventana, la textura y el sprite
+    RenderWindow window(VideoMode(((size - 2) * w) + 80, ((size - 2) * w) + 180), "NoBOMBS!");
     Texture t;
     t.loadFromFile("images/tiles.jpg");
     Sprite s(t);
+    //escibir en la pantalla
+    Font ds_digital;
+    ds_digital.loadFromFile("E:\\Facu\\5to\\Juego\\No-Bombs\\ds_digital\\DS-DIGI.TTF");
+    Text finish_text;
+    finish_text.setFont(ds_digital);
+    finish_text.setFillColor(Color::Red);
+    finish_text.setCharacterSize(60);
+    finish_text.setPosition(70, 20);
 
-    for (int i = 1; i <= 10; i++)
-        for (int j = 1; j <= 10; j++) {
+    //vaciando la grilla de minas y tapando la grilla mostrada
+    for (int i = 1; i < size - 1; i++) {
+        for (int j = 1; j < size - 1; j++) {
+            grid[i][j] = 0;
             sgrid[i][j] = 10;
-
-            if (rand() % 5 == 0) grid[i][j] = 9;
-            else grid[i][j] = 0;
         }
-
-    for (int i = 1; i <= 10; i++)
-        for (int j = 1; j <= 10; j++) {
+    }
+    //llenando el mapa de bombas
+    int bombs = 0;
+    while (bombs < bomb_count) {
+        //se selecciona una casilla random
+        int x = rand() % (size-2) + 1;
+        int y = rand() % (size-2) + 1;
+        //si la casilla ya no era una bomba se agrega una bomba
+        if (grid[x][y] != 9) {
+            grid[x][y] = 9;
+            bombs++;
+        }
+    }
+    //todo este for es para contar cuantas minas tienen al rededor cada espacio
+    for (int i = 1; i < size - 1; i++) {
+        for (int j = 1; j < size - 1; j++) {
             int n = 0;
+            //si el espacio en si es una mina entonces la saltea
             if (grid[i][j] == 9) continue;
+
             if (grid[i + 1][j] == 9) n++;
             if (grid[i][j + 1] == 9) n++;
             if (grid[i - 1][j] == 9) n++;
@@ -41,38 +84,80 @@ int main()
             if (grid[i - 1][j - 1] == 9) n++;
             if (grid[i - 1][j + 1] == 9) n++;
             if (grid[i + 1][j - 1] == 9) n++;
-
+            //se le da el valor correspondiente a la cant. de minas cercanas
             grid[i][j] = n;
         }
+    }
 
+    //Se hace asi, no pregunten
     while (window.isOpen())
     {
+        //tomo la posicion del mouse en la app y la divido por la medida de los cuadrados
         Vector2i position = Mouse::getPosition(window);
-        int x = position.x / w;
-        int y = position.y / w;
+        int position_x = position.x / w;
+        int position_y = (position.y - 100) / w;
 
+        //creo los eventos
         Event event;
         while (window.pollEvent(event))
         {
+            //para poder cerrar la ventana
             if (event.type == Event::Closed)
                 window.close();
-             if (event.type == Event::MouseButtonPressed)
-            if (event.key.code == Mouse::Left) sgrid[x][y] = grid[x][y];
-            else if (event.key.code == Mouse::Right) sgrid[x][y] = 11;
+            //si toco un boton del mouse copio la posicion del mouse en otra variable
+            if (event.type == Event::MouseButtonPressed) {
+                x = position_x;
+                y = position_y;
+                //si toco el boton derecho chequeo, si no esta revelado y no tiene bandera revelo y resto 1 a los no revelados
+                if (event.key.code == Mouse::Left) {
+                    if (sgrid[x][y] == 10) {
+                        unreveled -= 1;
+                        //si la cantidad si revelar es igual a la cantidad de bombas llama a finish con true
+                        if (unreveled == bomb_count) {
+                            finish = true;
+                            finish_text.setString("GANASTE!");
+                        }
+                        //muestra la ubicacion cliqueada
+                        sgrid[x][y] = grid[x][y];
+                        //si el lugar revelado tiene una bomba llama a finish con false y muestra todos los lugares
+                        if (sgrid[x][y] == 9) {
+                            finish = true;
+                            finish_text.setString("PERDISTE!");
+                            for (int i = 1; i < size - 1; i++) {
+                                for (int j = 1; j < size - 1; j++) {
+                                    sgrid[i][j] = grid[i][j];
+                                }
+                            }
+                        }
+                    }
+
+                }
+                //si es click izquierdo pone la bandera o la saca, en caso de que ya esté
+                else if (event.key.code == Mouse::Right) {
+                    if (sgrid[x][y] == 10)
+                        sgrid[x][y] = 11;
+                    else if (sgrid[x][y] == 11)
+                        sgrid[x][y] = 10;
+                }
+            }
 
         }
-
+        //blanquea la pantalla
         window.clear(Color::White);
-        for (int i = 1; i <= 10; i++)
-            for (int j = 1; j <= 10; j++) {
-
-                if (sgrid[x][y] == 9) sgrid[i][j] = grid[i][j];
-                else if (sgrid[x][y] == 0) check(grid, sgrid);
-
+        //En loop se dibujan todos los sprites cons sus respectivos valores
+        for (int i = 1; i < size - 1; i++) {
+            for (int j = 1; j < size - 1; j++) {
+                //se pasan de parametros del spray la ubicacion en x e y, el ancho y el alto en la textura
                 s.setTextureRect(IntRect(sgrid[i][j] * w, 0, w, w));
-                s.setPosition(i * w, j * w);
+                //se pasan de parametros del spray la ubicacion en x e y en la ventana
+                s.setPosition(i * w, j * w + 100);
                 window.draw(s);
             }
+        }
+        if (finish) {
+            window.draw(finish_text);
+        }
+        //se dibuja la pantalla
         window.display();
     }
 
