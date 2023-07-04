@@ -141,7 +141,7 @@ int main()
     timer_text.setFillColor(Color::Red);
     timer_text.setCharacterSize(40);
     timer_text.setPosition(25, 5);
-    int original_timer = 11;
+    int original_timer = 201;
     int timer = original_timer - 1;
     std::string timer_str = std::to_string(timer);
     timer_text.setString(timer_str);
@@ -277,9 +277,11 @@ int main()
             if (timer <= 0 || finish) {
                 counter = false;
                 finish = true;
-                std::string timer_str = std::to_string(timer);
-                timer_text.setString(timer_str);
-                game_lost();
+                if (unreveled != bomb_count) {
+                    std::string timer_str = std::to_string(timer);
+                    timer_text.setString(timer_str);
+                    game_lost();
+                }
             }
         }
 
@@ -293,7 +295,6 @@ int main()
                 //se pasan de parametros del spray la ubicacion en x e y en la ventana
                 s.setPosition(i * w, j * w + 100);
                 window.draw(s);
-                finish_text.setString("PERDISTE!");
             }
         }
         window.draw(timer_text);
